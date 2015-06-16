@@ -1,7 +1,7 @@
 function load() {
   apo.reloadCanvas('sample');
 
-  d1 = new DiagramObject("E");
+  d1 = new DiagramObject("Entity");
   d1.x = 10; d1.y = 10;
   d2 = new DiagramObject("MyEnemy");
   d2.x = 200; d2.y = 150;
