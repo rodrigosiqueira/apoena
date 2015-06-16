@@ -5,6 +5,7 @@
 - Make animationRequestFrame stop when mouse outside (performance)
 - Make animationRequestFrame start when mouse over canvas if not started (performance)
 - Smart lines, now it always go right-down from A to B
+- Separate variables and methods of DiagramObj
 
 ***************/
 
@@ -83,6 +84,8 @@ function Line() {
   this.A = null;
   this.B = null;
   apo.entitylist.push(this);
+  this.textA = '';
+  this.textB = '';
 };
 
 Line.prototype.recalculateLine = function(A, B) {
@@ -119,6 +122,32 @@ Line.prototype.draw = function() {
     apo.ctx.lineTo(this.points[i].x, this.points[i].y);
   }
   apo.ctx.stroke();
+
+  apo.ctx.font = "12px Times New Roman";
+  apo.ctx.fillStyle = "Black";
+  if(this.textA) {
+    apo.ctx.fillText(this.textA, this.points[0].x+5, this.points[0].y-12);
+  }
+  if(this.textB) {
+    var lastI = this.points.length-1;
+    apo.ctx.fillText(this.textB, this.points[lastI].x+5, this.points[lastI].y-12);
+  }
+};
+
+InheritanceLine.prototype = new Line();
+InheritanceLine.prototype.constructor=InheritanceLine;
+
+function InheritanceLine() {
+  Line.call(this);
+};
+
+InheritanceLine.prototype.draw = function() {
+  Line.prototype.draw.call(this);
+  var path = new Path2D();
+  path.moveTo(this.points[0].x, this.points[0].y);
+  path.lineTo(this.points[0].x+10, this.points[0].y-10);
+  path.lineTo(this.points[0].x+10, this.points[0].y+10);
+  apo.ctx.fill(path);
 };
 
 /// ---- Diagram class ---- ///

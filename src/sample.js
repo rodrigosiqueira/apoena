@@ -6,7 +6,9 @@ function load() {
   d2 = new DiagramObject("MyEnemy");
   d2.x = 200; d2.y = 150;
 
-  l = new Line();
+  l = new InheritanceLine();
+  l.textA = "n .. 1";
+  l.textB = "1 .. n";
   l.calculateLine(d1, d2);
 
   p = new Variable("mATK", "int");
