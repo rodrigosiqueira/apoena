@@ -1,3 +1,10 @@
+/**** TODO *****
+
+- Make move and click events for Diagram classes
+- Extend Line class to support the diagram class model
+
+***************/
+
 /****** Base ******/
 
 var apo = {
@@ -177,6 +184,12 @@ function Property() {
   this.type = null;
 };
 
+function Property(name, type) {
+  this.name = name;
+  this.visibility = visibility.public;
+  this.type = type;
+};
+
 Property.prototype.getWidth = function() {
   return 15;
 }
@@ -207,7 +220,9 @@ function Variable(name, type) {
 };
 
 Variable.prototype.getWidth = function() {
-  var len = apo.ctx.measureText(this.type+" : "+this.name).width;
+  apo.ctx.font = "15px Times New Roman";
+  var len = Property.prototype.getWidth.call(this);
+  len += apo.ctx.measureText(this.type+"  : "+this.name).width;
   return len;
 }
 
@@ -217,6 +232,52 @@ Variable.prototype.draw = function(x, y) {
   var len = apo.ctx.measureText(this.type+" : ");
   apo.ctx.fillText(this.type+" : ", x+10, y);
   apo.ctx.fillText(this.name, x+10+len.width, y);
+};
+
+Method.prototype = new Property();
+Method.prototype.constructor=Method;
+
+function Method(name, type) {
+  Property.call(this);
+  if(typeof name != 'undefined')
+    this.name = name;
+  if(typeof type != 'undefined')
+    this.type = type;
+
+  this.parameters = []
+};
+
+// Should use the following example format
+// int methodCall(int : variableName, int : variable2)
+Method.prototype.getWidth = function() {
+  apo.ctx.font = "15px Times New Roman";
+  var len = Property.prototype.getWidth.call(this);
+  len += apo.ctx.measureText(this.type+" : "+this.name+"(").width;
+
+  for(var i=0; i < this.parameters.length; i++) {
+    len += apo.ctx.measureText(this.parameters[i].type +" : "+this.parameters[i].name).width;
+    if(i != this.parameters.length-1){
+      len += apo.ctx.measureText(", ").width;
+    }
+  }
+  len += apo.ctx.measureText(") ").width;
+  return len;
+}
+
+Method.prototype.draw = function(x, y) {
+  Property.prototype.draw.call(this, x, y);
+
+  var len = apo.ctx.measureText(this.type+" : ");
+  apo.ctx.fillText(this.type+" : ", x+10, y);
+  var text = this.name + "(";
+  for(var i=0; i < this.parameters.length; i++) {
+    text += this.parameters[i].type + " : " + this.parameters[i].name;
+    if(i != this.parameters.length-1) {
+      text += ", ";
+    }
+  }
+  text += ")";
+  apo.ctx.fillText(text, x+10+len.width, y);
 };
 
 /***** End Classes *****/

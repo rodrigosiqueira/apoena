@@ -16,5 +16,10 @@ function load() {
   p2.visibility = visibility.private;
   d2.addProperty(p2);
 
+  m = new Method("methodCall", "void");
+  prop = new Property("varA", "float");
+  m.parameters.push(prop);
+  d2.addProperty(m);
+
   apo.draw();
 }
