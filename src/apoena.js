@@ -2,14 +2,30 @@
 
 - Make move and click events for Diagram classes
 - Extend Line class to support the diagram class model
+- Make animationRequestFrame stop when mouse outside (performance)
+- Make animationRequestFrame start when mouse over canvas if not started (performance)
+- Smart lines, now it always go right-down from A to B
 
 ***************/
 
 /****** Base ******/
-
+function canvasMouseClickListener(event) {
+  for(var i=0; i < apo.entitylist.length; i++) {
+    apo.entitylist[i].mouseclick(event);
+  }
+};
+function canvasMouseMoveListener(event) {
+  for(var i=0; i < apo.entitylist.length; i++) {
+    apo.entitylist[i].mousemove(event);
+  }
+};
 var apo = {
   cavas: document.getElementById('samplecanvas'),
   ctx: null,
+  getMousePos: function(event) {
+    var rect = apo.canvas.getBoundingClientRect();
+    return {x: event.clientX - rect.left, y: event.clientY - rect.top }
+  },
   reloadCanvas: function(canvasID) {
     this.canvas = document.getElementById(canvasID);
     if (!this.canvas.getContext) {
@@ -17,16 +33,17 @@ var apo = {
       return false;
     }
     this.ctx = this.canvas.getContext('2d');
+    this.canvas.addEventListener('click', canvasMouseClickListener);
+    this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
     return true;
   },
   entitylist: [],
   draw: function() {
-    console.log("draw");
+    apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
     for(var i=0; i < apo.entitylist.length; i++){
-      console.log(i);
-      console.log('len '+apo.entitylist.length);
       apo.entitylist[i].draw();
     }
+    window.requestAnimationFrame(apo.draw);
   }
 };
 
@@ -44,11 +61,16 @@ function Point(x, y) {
 
 function Drawable() {
   this.name = 'draw';
-  //console.log('Drawable constructed');
 };
 
 Drawable.prototype.draw = function() {
   console.log('draw function not implemented');
+};
+
+Drawable.prototype.mousemove = function(event){
+};
+
+Drawable.prototype.mouseclick = function(event){
 };
 
 /// ---- Line class ---- ///
@@ -117,9 +139,33 @@ function DiagramObject(name) {
   this.height = 30+20;
   this.properties = [];
   this.lines = [];
+  this.drag = false;
+
+  this.offset = {x:0, y:0}
 
   apo.entitylist.push(this);
   console.log("Diagram created");
+};
+
+DiagramObject.prototype.mousemove = function(event) {
+  if(this.drag) {
+    var rect = apo.canvas.getBoundingClientRect();
+    this.x = event.clientX - rect.left - this.offset.x;
+    this.y = event.clientY - rect.top - this.offset.y;
+    this.reloadLines();
+  }
+};
+
+DiagramObject.prototype.mouseclick = function(event) {
+  var mouse = apo.getMousePos(event);
+  if( mouse.x > this.x &&
+      mouse.y > this.y &&
+      mouse.x-this.width < this.x &&
+      mouse.y-this.height < this.y) {
+    this.drag = !this.drag;
+    this.offset.x = mouse.x - this.x;
+    this.offset.y = mouse.y - this.y;
+  }
 };
 
 DiagramObject.prototype.setPos = function(x, y) {
@@ -159,14 +205,18 @@ DiagramObject.prototype.draw = function() {
 
 };
 
+DiagramObject.prototype.reloadLines = function() {
+  for(var i=0; i < this.lines.length; i++) {
+      this.lines[i].recalculateLine();
+    }
+}
+
 DiagramObject.prototype.addProperty = function(obj) {
   this.height += 15;
   var objWidth = obj.getWidth();
   if(objWidth > this.width) {
     this.width = objWidth;
-    for(var i=0; i < this.lines.length; i++) {
-      this.lines[i].recalculateLine();
-    }
+    this.reloadLines();
   }
   this.properties.push(obj);
 };
