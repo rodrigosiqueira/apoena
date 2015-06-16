@@ -7,6 +7,8 @@
   <script type='text/javascript' src='../src/sample.js'></script>
   <style type="text/css">
     canvas { border: 1px solid black; }
+    .todo { border: 1px solid black; background: rgb(230,230,230); width: 800px; padding-left: 10px; }
+    h2 { margin-bottom: 0px; }
   </style>
 </head>
 <body onload="load()">
@@ -16,5 +18,16 @@
   Not supported
 </canvas>
 
+<div class="todo">
+  <h2>To-do list:</h2>
+  <ul>
+    <li>Make move and click events for Diagram classes</li>
+    <li>Extend Line class to support the diagram class model</li>
+    <li>Make animationRequestFrame stop when mouse outside (performance)</li>
+    <li>Make animationRequestFrame start when mouse over canvas if not started (performance)</li>
+    <li>Smart lines, now it always go right-down from A to B</li>
+    <li>Separate variables and methods of DiagramObj</li>
+  </ul>
+</div>
 </body>
 </html>
