@@ -2,7 +2,7 @@ function load() {
   apo.reloadCanvas('sample');
 
   d1 = new DiagramObject("Entity");
-  d1.x = 10; d1.y = 10;
+  d1.x = 100; d1.y = 100;
   d2 = new DiagramObject("MyEnemy");
   d2.x = 200; d2.y = 150;
 
@@ -24,4 +24,8 @@ function load() {
   d2.addProperty(m);
 
   apo.draw();
+}
+
+function parse() {
+  import_class('class_data.xml')
 }

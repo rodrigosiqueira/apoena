@@ -4,6 +4,7 @@
   <title>Sample Page</title>
 
   <script type='text/javascript' src='../src/apoena.js'></script>
+  <script type='text/javascript' src='../src/apoena_parser.js'></script>
   <script type='text/javascript' src='../src/sample.js'></script>
   <style type="text/css">
     canvas { border: 1px solid black; }
@@ -14,6 +15,10 @@
 <body onload="load()">
 
 <h1>Theis is a sample page</h1>
+<p>
+  <a href="#" onclick="parse()">Add parsed element</a>
+  <a href="class_data.xml">(HtmlLogger)</a>
+</p>
 <canvas id='sample' width='800', height='600'>
   Not supported
 </canvas>
@@ -21,8 +26,14 @@
 <div class="todo">
   <h2>To-do list:</h2>
   <ul>
-    <li>Make move and click events for Diagram classes</li>
+    <li><s>Make move and click events for Diagram classes</s></li>
     <li>Extend Line class to support the diagram class model</li>
+    <ul>
+      <li><s>Generalization(Inheritance)</s></li>
+      <li>Association</li>
+      <li>Aggregation</li>
+      <li>Composition</li>
+    </ul>
     <li>Make animationRequestFrame stop when mouse outside (performance)</li>
     <li>Make animationRequestFrame start when mouse over canvas if not started (performance)</li>
     <li>Smart lines, now it always go right-down from A to B</li>
