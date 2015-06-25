@@ -15,20 +15,21 @@ var apo_parser = {
     }
   },
   processMethod: function(data, diagram) {
-     method = new Method(data.getAttribute('name'));
+    method = new Method(data.getAttribute('name'));
 
     for(var i=0; i < data.children.length; i++) {
       console.log(data.children[i]);
       var name = data.children[i].tagName;
       if(name == "parameter") {
-          this.processParameter(data.children[i], diagram, method);
+          this.processParameter(data.children[i], method);
       }
     }
-  },
-  processParameter: function(data, diagram, method) {
-    prop = new Property(data.children[0].innerHTML, "float");
-    console.log(prop);
     diagram.addProperty(method);
+  },
+  processParameter: function(data, method) {
+    prop = new Property(data.getAttribute('name'), "float");
+    console.log(prop);
+    method.parameters.push(prop);
     for(var i=0; i < data.children.length; i++) {
       console.log(data.children[i]);
       var name = data.children[i].tagName;
