@@ -95,14 +95,27 @@ Line.prototype.recalculateLine = function(A, B) {
   if(typeof B != 'undefined')
     this.B = B;
 
-  var ax = this.A.x+this.A.width;
-  var ay = this.A.y+this.A.height/2.0;
-  var bx = this.B.x+this.B.width/2.0;
-  var by = this.B.y;
+  var cax = this.A.x+this.A.width/2.0;
+  var cay = this.A.y+this.A.height/2.0;
+  var cbx = this.B.x+this.B.width/2.0;
+  var cby = this.B.y+this.B.height/2.0;
 
-  this.points[0].x = ax; this.points[0].y = ay;
-  this.points[1].x = bx; this.points[1].y = ay;
-  this.points[2].x = bx; this.points[2].y = by;
+  this.points[0].x = cax; this.points[0].y = cay;
+  this.points[1].x = cbx; this.points[1].y = cay;
+  this.points[2].x = cbx; this.points[2].y = cby;
+
+
+  // Set lines to the boundary of the diagram
+  if(this.points[0].x < this.points[1].x) {
+    this.points[0].x += this.A.width/2.0;
+  }else{
+    this.points[0].x -= this.A.width/2.0;
+  }
+  if(this.points[2].y < this.points[1].y) {
+    this.points[2].y += this.B.height/2.0;
+  }else{
+    this.points[2].y -= this.B.height/2.0;
+  }
 };
 
 Line.prototype.calculateLine = function(A, B) {
@@ -126,11 +139,19 @@ Line.prototype.draw = function() {
   apo.ctx.font = "12px Times New Roman";
   apo.ctx.fillStyle = "Black";
   if(this.textA) {
-    apo.ctx.fillText(this.textA, this.points[0].x+5, this.points[0].y-12);
+    var dx = 0;
+    if(this.points[0].x > this.points[1].x){
+      dx = apo.ctx.measureText(this.textA).width+10;
+    }
+    apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12);
   }
   if(this.textB) {
+    var dy = 0;
+    if(this.points[2].y < this.points[1].y){
+      dy = 30;
+    }
     var lastI = this.points.length-1;
-    apo.ctx.fillText(this.textB, this.points[lastI].x+5, this.points[lastI].y-12);
+    apo.ctx.fillText(this.textB, this.points[lastI].x+5, dy+this.points[lastI].y-12);
   }
 };
 
@@ -142,11 +163,34 @@ function InheritanceLine() {
 };
 
 InheritanceLine.prototype.draw = function() {
+  if(!this.A || !this.B) return;
   Line.prototype.draw.call(this);
   var path = new Path2D();
-  path.moveTo(this.points[0].x, this.points[0].y);
-  path.lineTo(this.points[0].x+10, this.points[0].y-10);
-  path.lineTo(this.points[0].x+10, this.points[0].y+10);
+
+  var px = this.points[0].x;
+  var py = this.points[0].y;
+  var size = 10;
+
+  var horizontalArrow = true
+  if(px == this.points[1].x){
+    horizontalArrow = false;
+  }
+
+  if(horizontalArrow) {
+    if(px > this.points[1].x) {
+      size = -size;
+    }
+    path.moveTo(px, py);
+    path.lineTo(px+size, py-size);
+    path.lineTo(px+size, py+size);
+  } else {
+    if(py < this.points[1].y){
+      size = -size;
+    }
+    path.moveTo(px, py);
+    path.lineTo(px+size, py+size);
+    path.lineTo(px-size, py+size);
+  }
   apo.ctx.fill(path);
 };
 
