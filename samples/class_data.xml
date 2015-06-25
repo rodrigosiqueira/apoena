@@ -1,8 +1,27 @@
 <?xml version="1.0"?>
+<kuniri>
 <class_data name="HtmlLogger">
-  <method name="write_log">
-    <parameter>
-      <name>pMessage</name>
-    </parameter>
+  <method name="write_log" visibility="global">
+    <parameter name="pMessage"/>
   </method>
+  <method name="initialize">
+    <parameter name="pPath="/>
+  </method>
+  <inheritance name="Logger"/>
+</class_data><class_data name="Logger">
+  <method name="write_log" visibility="global">
+    <parameter name="pMessage"/>
+  </method>
+  <method name="initialize">
+    <parameter name="pPath="/>
+  </method>
+</class_data><class_data name="TxtLogger">
+  <method name="write_log" visibility="global">
+    <parameter name="pMessage"/>
+  </method>
+  <method name="initialize">
+    <parameter name="pPath="/>
+  </method>
+  <inheritance name="Logger"/>
 </class_data>
+</kuniri>
