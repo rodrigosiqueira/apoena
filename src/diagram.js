@@ -57,7 +57,11 @@ DiagramObject.prototype.setPos = function(x, y) {
 };
 
 DiagramObject.prototype.draw = function() {
-  apo.ctx.fillStyle = "rgb(180,150,100)";
+  var grd=apo.ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height/2);
+  grd.addColorStop(0,"rgb(100,50,100)");
+  grd.addColorStop(1,"rgb(180,150,100)");
+
+  apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
   apo.ctx.fillStyle = "Black";
   apo.ctx.strokeRect(this.x, this.y, this.width, this.height);
