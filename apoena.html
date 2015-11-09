@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sample Page</title>
+
+  <script type='text/javascript' src='src/apoena_parser.js'></script>
+  <script type='text/javascript' src='src/core.js'></script>
+  <script type='text/javascript' src='src/line.js'></script>
+  <script type='text/javascript' src='src/inheritance_line.js'></script>
+  <script type='text/javascript' src='src/diagram.js'></script>
+  <script type='text/javascript' src='src/property_diagram.js'></script>
+  <script type='text/javascript' src='src/variable_property.js'></script>
+  <script type='text/javascript' src='src/method_property.js'></script>
+  <script type='text/javascript' src='src/sample.js'></script>
+  <link rel="stylesheet" type="text/css" href="stylesheet/style.css">
+</head>
+<body onload="load()">
+<center>
+<h1>This is a sample page</h1>
+<p>
+  <a href="#" onclick="parse()">Add parsed element</a>
+  <a href="samples/class_data.xml">(HtmlLogger)</a>
+</p>
+
+<canvas id='sample' width='800', height='600'>
+  Not supported
+</canvas>
+<div class="todo">
+  <h2>To-do list:</h2>
+  <ul>
+    <li><s>Make move and click events for Diagram classes</s></li>
+    <li>Extend Line class to support the diagram class model</li>
+    <ul>
+      <li><s>Generalization(Inheritance)</s></li>
+      <li>Association</li>
+      <li>Aggregation</li>
+      <li>Composition</li>
+    </ul>
+    <li>Make animationRequestFrame stop when mouse outside (performance)</li>
+    <li>Make animationRequestFrame start when mouse over canvas if not started (performance)</li>
+    <li>Smart lines, now it always go right-down from A to B</li>
+    <li>Separate variables and methods of DiagramObj</li>
+  </ul>
+  <ul>
+    Diagram
+    <li>Zooming</li>
+    <li>Click single element</li>
+    <li>Arrangement</li>
+    <li>Colors</li>
+    <li>Snap to Grid</li>
+  </ul>
+  <ul>
+    Line
+    <li>Calculation</li>
+    <li>Kinds</li>
+  </ul>
+  <ul>
+    Attributes
+    <li>Default</li>
+  </ul>
+</div>
+</center>
+</body>
+</html>

@@ -1,0 +1,15 @@
+canvas {
+	border: 1px solid black;
+}
+
+.todo {
+	border: 1px solid black;
+	background: rgb(230,230,230);
+	width: 800px;
+	padding-left: 10px;
+	text-align: left;
+}
+
+h2 {
+	margin-bottom: 0px;
+}
