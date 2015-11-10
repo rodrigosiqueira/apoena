@@ -41,10 +41,12 @@ QUnit.test("DiagramObject reload lines", function(assert) {
   assert.expect(1);
 
   var diagramObject = new DiagramObject();
+  // implement me
 });
 
 QUnit.test("DiagramObject add property", function(assert) {
   assert.expect(1);
 
   var diagramObject = new DiagramObject();
+  // implement me
 });
