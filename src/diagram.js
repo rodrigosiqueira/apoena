@@ -5,14 +5,22 @@ DiagramObject.prototype.constructor=DiagramObject;
 function DiagramObject(name) {
   Drawable.call(this);
 
-  if(typeof name != 'undefined')
+  if(typeof name != 'undefined') {
     this.name = name;
-  else
+  }
+  else {
     this.name="DiagramObject";
+  }
+
   this.x = 0;
   this.y = 0;
-  apo.ctx.font = "20px Times New Roman";
-  this.width = apo.ctx.measureText(this.name).width+10;
+  if(apo.ctx != null) {
+    apo.ctx.font = "20px Times New Roman";
+    this.width = apo.ctx.measureText(this.name).width+10;
+  }
+  else {
+    this.width = 0;
+  }
   this.height = 30+20;
   this.properties = [];
   this.lines = [];
