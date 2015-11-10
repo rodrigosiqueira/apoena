@@ -1,10 +1,4 @@
-function Property() {
-  this.name = "Property";
-  this.visibility = visibility.public;
-  this.type = null;
-};
-
-function Property(name, type) {
+function Property(name="Property", type=null) {
   this.name = name;
   this.visibility = visibility.public;
   this.type = type;
