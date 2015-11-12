@@ -14,14 +14,9 @@ function DiagramObject(name) {
 
   this.x = 0;
   this.y = 0;
-  if(apo.ctx != null) {
-    apo.ctx.font = "20px Times New Roman";
-    this.width = apo.ctx.measureText(this.name).width+10;
-  }
-  else {
-    this.width = 0;
-  }
   this.height = 30+20;
+  this.width = apo.ctx.measureText(this.name).width+10;
+  apo.ctx.font = "20px Times New Roman";
   this.properties = [];
   this.lines = [];
   this.drag = false;
@@ -103,7 +98,7 @@ DiagramObject.prototype.draw = function() {
 DiagramObject.prototype.reloadLines = function() {
   for(var i=0; i < this.lines.length; i++) {
       this.lines[i].recalculateLine();
-    }
+  }
 }
 
 DiagramObject.prototype.addProperty = function(obj) {
