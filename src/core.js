@@ -9,7 +9,7 @@ function canvasMouseMoveListener(event) {
   }
 };
 var apo = {
-  cavas: document.getElementById('samplecanvas'),
+  canvas: document.getElementById('samplecanvas'),
   ctx: null,
   currentDiagram: "",
   getMousePos: function(event) {
