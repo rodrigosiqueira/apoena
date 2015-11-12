@@ -47,10 +47,16 @@ DiagramObject.prototype.mouseclick = function(event) {
     this.drag = !this.drag;
     this.offset.x = mouse.x - this.x;
     this.offset.y = mouse.y - this.y;
-    if(this.drag)
+    if(this.drag) {
       apo.currentDiagram = this.name;
-    else
+    }
+    else {
       apo.currentDiagram = "";
+      var gridSize = 50;
+      this.x -= this.x % gridSize;
+      this.y -= this.y % gridSize;
+      this.reloadLines();
+    }
   }
 };
 

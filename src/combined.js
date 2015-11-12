@@ -9,7 +9,7 @@ function canvasMouseMoveListener(event) {
   }
 };
 var apo = {
-  cavas: document.getElementById('samplecanvas'),
+  canvas: document.getElementById('samplecanvas'),
   ctx: null,
   currentDiagram: "",
   getMousePos: function(event) {
@@ -190,14 +190,9 @@ function DiagramObject(name) {
 
   this.x = 0;
   this.y = 0;
-  if(apo.ctx != null) {
-    apo.ctx.font = "20px Times New Roman";
-    this.width = apo.ctx.measureText(this.name).width+10;
-  }
-  else {
-    this.width = 0;
-  }
   this.height = 30+20;
+  this.width = apo.ctx.measureText(this.name).width+10;
+  apo.ctx.font = "20px Times New Roman";
   this.properties = [];
   this.lines = [];
   this.drag = false;
@@ -228,10 +223,16 @@ DiagramObject.prototype.mouseclick = function(event) {
     this.drag = !this.drag;
     this.offset.x = mouse.x - this.x;
     this.offset.y = mouse.y - this.y;
-    if(this.drag)
+    if(this.drag) {
       apo.currentDiagram = this.name;
-    else
+    }
+    else {
       apo.currentDiagram = "";
+      var gridSize = 50;
+      this.x -= this.x % gridSize;
+      this.y -= this.y % gridSize;
+      this.reloadLines();
+    }
   }
 };
 
@@ -279,7 +280,7 @@ DiagramObject.prototype.draw = function() {
 DiagramObject.prototype.reloadLines = function() {
   for(var i=0; i < this.lines.length; i++) {
       this.lines[i].recalculateLine();
-    }
+  }
 }
 
 DiagramObject.prototype.addProperty = function(obj) {
