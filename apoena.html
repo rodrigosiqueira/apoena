@@ -3,26 +3,22 @@
 <head>
   <title>Sample Page</title>
 
-  <script type='text/javascript' src='../src/apoena.js'></script>
-  <script type='text/javascript' src='../src/apoena_parser.js'></script>
-  <script type='text/javascript' src='../src/sample.js'></script>
-  <style type="text/css">
-    canvas { border: 1px solid black; }
-    .todo { border: 1px solid black; background: rgb(230,230,230); width: 800px; padding-left: 10px; }
-    h2 { margin-bottom: 0px; }
-  </style>
+  <script type='text/javascript' src='src/combined.js'></script>
+  <script type='text/javascript' src='src/sample.js'></script>
+
+  <link rel="stylesheet" type="text/css" href="stylesheet/style.css">
 </head>
 <body onload="load()">
-
-<h1>Theis is a sample page</h1>
+<center>
+<h1>This is a sample page</h1>
 <p>
   <a href="#" onclick="parse()">Add parsed element</a>
-  <a href="class_data.xml">(HtmlLogger)</a>
+  <a href="samples/class_data.xml">(HtmlLogger)</a>
 </p>
+
 <canvas id='sample' width='800', height='600'>
   Not supported
 </canvas>
-
 <div class="todo">
   <h2>To-do list:</h2>
   <ul>
@@ -39,6 +35,25 @@
     <li>Smart lines, now it always go right-down from A to B</li>
     <li>Separate variables and methods of DiagramObj</li>
   </ul>
+  <ul>
+    Diagram
+    <li>Zooming</li>
+    <li><s>Click single element</s></li>
+    <li>Arrangement</li>
+    <li>Colors</li>
+    <li>Snap to Grid</li>
+    <li>Comments on hover</li>
+  </ul>
+  <ul>
+    Line
+    <li>Calculation</li>
+    <li>Kinds</li>
+  </ul>
+  <ul>
+    Attributes
+    <li>Default</li>
+  </ul>
 </div>
+</center>
 </body>
 </html>

@@ -27,5 +27,5 @@ function load() {
 }
 
 function parse() {
-  import_class('class_data.xml')
+  import_class('samples/class_data.xml')
 }
