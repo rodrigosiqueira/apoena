@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define JAMMED_FILE "jammed.js"
+#define JAMMED_FILE "combined.js"
 
-#define NUMBER_OF_JS 9
+#define NUMBER_OF_JS 8
 
 
 #define file0 "core.js"
@@ -14,8 +14,7 @@
 #define file4 "property_diagram.js"
 #define file5 "variable_property.js"
 #define file6 "method_property.js"
-#define file7 "test.js"
-#define file8 "apoena_parser.js"
+#define file7 "apoena_parser.js"
 
 
 
@@ -45,10 +44,9 @@
 #define IF_FILE5 if(i==5) {tempNode->filename = file5;}
 #define IF_FILE6 if(i==6) {tempNode->filename = file6;}
 #define IF_FILE7 if(i==7) {tempNode->filename = file7;}
-#define IF_FILE8 if(i==8) {tempNode->filename = file8;}
 
 
-#define GAMBIARRA fin = fopen(file8, "rb");assert(fin!=NULL);write(fin, fout, file8);
+#define GAMBIARRA fin = fopen(file7, "rb");assert(fin!=NULL);write(fin, fout, file7);
 
 typedef struct _NODE{
 	char *filename;
@@ -115,7 +113,6 @@ int main(){
 			IF_FILE5
 			IF_FILE6
 			IF_FILE7
-			IF_FILE8
 		}
 	}
 
