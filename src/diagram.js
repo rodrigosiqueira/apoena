@@ -5,15 +5,18 @@ DiagramObject.prototype.constructor=DiagramObject;
 function DiagramObject(name) {
   Drawable.call(this);
 
-  if(typeof name != 'undefined')
+  if(typeof name != 'undefined') {
     this.name = name;
-  else
+  }
+  else {
     this.name="DiagramObject";
+  }
+
   this.x = 0;
   this.y = 0;
-  apo.ctx.font = "20px Times New Roman";
-  this.width = apo.ctx.measureText(this.name).width+10;
   this.height = 30+20;
+  this.width = apo.ctx.measureText(this.name).width+10;
+  apo.ctx.font = "20px Times New Roman";
   this.properties = [];
   this.lines = [];
   this.drag = false;
@@ -44,10 +47,16 @@ DiagramObject.prototype.mouseclick = function(event) {
     this.drag = !this.drag;
     this.offset.x = mouse.x - this.x;
     this.offset.y = mouse.y - this.y;
-    if(this.drag)
+    if(this.drag) {
       apo.currentDiagram = this.name;
-    else
+    }
+    else {
       apo.currentDiagram = "";
+      var gridSize = apo.grid.step;
+      this.x -= this.x % gridSize;
+      this.y -= this.y % gridSize;
+      this.reloadLines();
+    }
   }
 };
 
@@ -63,7 +72,8 @@ DiagramObject.prototype.draw = function() {
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
-  apo.ctx.fillStyle = "Black";
+  apo.ctx.lineWidth = 2;
+  apo.ctx.strokeStyle = "Black";
   apo.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
   apo.ctx.font = "20px Times New Roman";
@@ -75,6 +85,7 @@ DiagramObject.prototype.draw = function() {
   apo.ctx.fillText(this.name, this.x+5, this.y+20);
 
   //Spacing after name, 5+height(20)+5
+  apo.ctx.lineWidth = 1;
   apo.ctx.beginPath();
   apo.ctx.moveTo(this.x, this.y+30);
   apo.ctx.lineTo(this.x+this.width, this.y+30);
@@ -95,7 +106,7 @@ DiagramObject.prototype.draw = function() {
 DiagramObject.prototype.reloadLines = function() {
   for(var i=0; i < this.lines.length; i++) {
       this.lines[i].recalculateLine();
-    }
+  }
 }
 
 DiagramObject.prototype.addProperty = function(obj) {

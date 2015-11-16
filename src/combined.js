@@ -1,17 +1,33 @@
+var mouseOverCanvas = true;
+
 function canvasMouseClickListener(event) {
   for(var i=apo.entitylist.length-1; i >= 0; --i) {
     apo.entitylist[i].mouseclick(event);
   }
 };
+
 function canvasMouseMoveListener(event) {
   for(var i=apo.entitylist.length-1; i >= 0; --i) {
     apo.entitylist[i].mousemove(event);
   }
 };
+
+function canvasMouseLeaveListener(event) {
+  mouseOverCanvas = false;
+  startAnimation();
+};
+
+function canvasMouseOverListener(event) {
+  mouseOverCanvas = true;
+  startAnimation();
+};
+
 var apo = {
-  cavas: document.getElementById('samplecanvas'),
+  canvas: document.getElementById('samplecanvas'),
   ctx: null,
   currentDiagram: "",
+  entitylist: [],
+  grid: null,
   getMousePos: function(event) {
     var rect = apo.canvas.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top }
@@ -22,20 +38,34 @@ var apo = {
       console.log("Canvas not supported");
       return false;
     }
+    this.grid = new Grid();
     this.ctx = this.canvas.getContext('2d');
     this.canvas.addEventListener('click', canvasMouseClickListener);
     this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
+    this.canvas.addEventListener('mouseleave', canvasMouseLeaveListener, false);
+    this.canvas.addEventListener('mouseover', canvasMouseOverListener, false);
     return true;
   },
-  entitylist: [],
   draw: function() {
-    apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
-    for(var i=0; i < apo.entitylist.length; i++){
-      apo.entitylist[i].draw();
+    if(mouseOverCanvas === true) {
+      apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
+      if(apo.grid.active){
+        apo.grid.draw();
+      }
+      for(var i=0; i < apo.entitylist.length; i++){
+        apo.entitylist[i].draw();
+      }
+
+      window.requestAnimationFrame(apo.draw);
     }
+  }
+};
+
+function startAnimation() {
+  if(mouseOverCanvas) {
     window.requestAnimationFrame(apo.draw);
   }
-};function Point(x=0, y=0) {
+}function Point(x=0, y=0) {
 	this.x = x;
 	this.y = y;
 };
@@ -110,7 +140,8 @@ Line.prototype.draw = function() {
 	if(this.points.length == 0) return;
 
 	apo.ctx.beginPath();
-	apo.ctx.fillStyle = "Black";
+	apo.ctx.lineWidth = 2;
+	apo.ctx.strokeStyle = "Black";
 	apo.ctx.moveTo(this.points[0].x, this.points[0].y);
 
 	for(var i=1; i < this.points.length; i++) {
@@ -181,15 +212,18 @@ DiagramObject.prototype.constructor=DiagramObject;
 function DiagramObject(name) {
   Drawable.call(this);
 
-  if(typeof name != 'undefined')
+  if(typeof name != 'undefined') {
     this.name = name;
-  else
+  }
+  else {
     this.name="DiagramObject";
+  }
+
   this.x = 0;
   this.y = 0;
-  apo.ctx.font = "20px Times New Roman";
-  this.width = apo.ctx.measureText(this.name).width+10;
   this.height = 30+20;
+  this.width = apo.ctx.measureText(this.name).width+10;
+  apo.ctx.font = "20px Times New Roman";
   this.properties = [];
   this.lines = [];
   this.drag = false;
@@ -220,10 +254,16 @@ DiagramObject.prototype.mouseclick = function(event) {
     this.drag = !this.drag;
     this.offset.x = mouse.x - this.x;
     this.offset.y = mouse.y - this.y;
-    if(this.drag)
+    if(this.drag) {
       apo.currentDiagram = this.name;
-    else
+    }
+    else {
       apo.currentDiagram = "";
+      var gridSize = apo.grid.step;
+      this.x -= this.x % gridSize;
+      this.y -= this.y % gridSize;
+      this.reloadLines();
+    }
   }
 };
 
@@ -239,7 +279,8 @@ DiagramObject.prototype.draw = function() {
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
-  apo.ctx.fillStyle = "Black";
+  apo.ctx.lineWidth = 2;
+  apo.ctx.strokeStyle = "Black";
   apo.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
   apo.ctx.font = "20px Times New Roman";
@@ -251,6 +292,7 @@ DiagramObject.prototype.draw = function() {
   apo.ctx.fillText(this.name, this.x+5, this.y+20);
 
   //Spacing after name, 5+height(20)+5
+  apo.ctx.lineWidth = 1;
   apo.ctx.beginPath();
   apo.ctx.moveTo(this.x, this.y+30);
   apo.ctx.lineTo(this.x+this.width, this.y+30);
@@ -271,7 +313,7 @@ DiagramObject.prototype.draw = function() {
 DiagramObject.prototype.reloadLines = function() {
   for(var i=0; i < this.lines.length; i++) {
       this.lines[i].recalculateLine();
-    }
+  }
 }
 
 DiagramObject.prototype.addProperty = function(obj) {
@@ -289,13 +331,7 @@ var visibility = {
   public: 0,
   private: 1,
   protected: 2
-};function Property() {
-  this.name = "Property";
-  this.visibility = visibility.public;
-  this.type = null;
-};
-
-function Property(name, type) {
+};function Property(name="Property", type=null) {
   this.name = name;
   this.visibility = visibility.public;
   this.type = type;
@@ -477,4 +513,31 @@ function import_class(xml_path) {
     }
     l.calculateLine(d1, d2);
   }
-};
+};Grid.prototype = new Drawable();
+Grid.prototype.constructor=Grid;
+
+function Grid() {
+  Drawable.call(this);
+
+  this.active = true;
+  this.step = 20;
+
+  this.draw = function(){
+  	var width = apo.canvas.width;
+  	var height = apo.canvas.height;
+  	apo.ctx.lineWidth = 0.5;
+  	apo.ctx.strokeStyle = "blue";
+  	for (var i = 0; i < height; i+=this.step) {
+  		apo.ctx.beginPath();
+  		apo.ctx.moveTo(0,i);
+  		apo.ctx.lineTo(width,i);
+  		apo.ctx.stroke();
+  	}
+  	for (var i = 0; i < width; i+=this.step) {
+  		apo.ctx.beginPath();
+  		apo.ctx.moveTo(i,0);
+  		apo.ctx.lineTo(i,height);
+  		apo.ctx.stroke();
+  	}
+  }
+}
