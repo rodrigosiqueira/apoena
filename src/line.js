@@ -73,7 +73,8 @@ Line.prototype.draw = function() {
 	if(this.points.length == 0) return;
 
 	apo.ctx.beginPath();
-	apo.ctx.fillStyle = "Black";
+	apo.ctx.lineWidth = 2;
+	apo.ctx.strokeStyle = "Black";
 	apo.ctx.moveTo(this.points[0].x, this.points[0].y);
 
 	for(var i=1; i < this.points.length; i++) {

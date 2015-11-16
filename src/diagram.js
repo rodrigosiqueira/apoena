@@ -52,7 +52,7 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = 50;
+      var gridSize = apo.grid.step;
       this.x -= this.x % gridSize;
       this.y -= this.y % gridSize;
       this.reloadLines();
@@ -72,7 +72,8 @@ DiagramObject.prototype.draw = function() {
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
-  apo.ctx.fillStyle = "Black";
+  apo.ctx.lineWidth = 2;
+  apo.ctx.strokeStyle = "Black";
   apo.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
   apo.ctx.font = "20px Times New Roman";
@@ -84,6 +85,7 @@ DiagramObject.prototype.draw = function() {
   apo.ctx.fillText(this.name, this.x+5, this.y+20);
 
   //Spacing after name, 5+height(20)+5
+  apo.ctx.lineWidth = 1;
   apo.ctx.beginPath();
   apo.ctx.moveTo(this.x, this.y+30);
   apo.ctx.lineTo(this.x+this.width, this.y+30);

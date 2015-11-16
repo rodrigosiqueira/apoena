@@ -27,6 +27,7 @@ var apo = {
   ctx: null,
   currentDiagram: "",
   entitylist: [],
+  grid: null,
   getMousePos: function(event) {
     var rect = apo.canvas.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top }
@@ -37,6 +38,7 @@ var apo = {
       console.log("Canvas not supported");
       return false;
     }
+    this.grid = new Grid();
     this.ctx = this.canvas.getContext('2d');
     this.canvas.addEventListener('click', canvasMouseClickListener);
     this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
@@ -47,6 +49,9 @@ var apo = {
   draw: function() {
     if(mouseOverCanvas === true) {
       apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
+      if(apo.grid.active){
+        apo.grid.draw();
+      }
       for(var i=0; i < apo.entitylist.length; i++){
         apo.entitylist[i].draw();
       }
@@ -135,7 +140,8 @@ Line.prototype.draw = function() {
 	if(this.points.length == 0) return;
 
 	apo.ctx.beginPath();
-	apo.ctx.fillStyle = "Black";
+	apo.ctx.lineWidth = 2;
+	apo.ctx.strokeStyle = "Black";
 	apo.ctx.moveTo(this.points[0].x, this.points[0].y);
 
 	for(var i=1; i < this.points.length; i++) {
@@ -253,7 +259,7 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = 50;
+      var gridSize = apo.grid.step;
       this.x -= this.x % gridSize;
       this.y -= this.y % gridSize;
       this.reloadLines();
@@ -273,7 +279,8 @@ DiagramObject.prototype.draw = function() {
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
-  apo.ctx.fillStyle = "Black";
+  apo.ctx.lineWidth = 2;
+  apo.ctx.strokeStyle = "Black";
   apo.ctx.strokeRect(this.x, this.y, this.width, this.height);
 
   apo.ctx.font = "20px Times New Roman";
@@ -285,6 +292,7 @@ DiagramObject.prototype.draw = function() {
   apo.ctx.fillText(this.name, this.x+5, this.y+20);
 
   //Spacing after name, 5+height(20)+5
+  apo.ctx.lineWidth = 1;
   apo.ctx.beginPath();
   apo.ctx.moveTo(this.x, this.y+30);
   apo.ctx.lineTo(this.x+this.width, this.y+30);
@@ -505,4 +513,31 @@ function import_class(xml_path) {
     }
     l.calculateLine(d1, d2);
   }
-};
+};Grid.prototype = new Drawable();
+Grid.prototype.constructor=Grid;
+
+function Grid() {
+  Drawable.call(this);
+
+  this.active = true;
+  this.step = 20;
+
+  this.draw = function(){
+  	var width = apo.canvas.width;
+  	var height = apo.canvas.height;
+  	apo.ctx.lineWidth = 0.5;
+  	apo.ctx.strokeStyle = "blue";
+  	for (var i = 0; i < height; i+=this.step) {
+  		apo.ctx.beginPath();
+  		apo.ctx.moveTo(0,i);
+  		apo.ctx.lineTo(width,i);
+  		apo.ctx.stroke();
+  	}
+  	for (var i = 0; i < width; i+=this.step) {
+  		apo.ctx.beginPath();
+  		apo.ctx.moveTo(i,0);
+  		apo.ctx.lineTo(i,height);
+  		apo.ctx.stroke();
+  	}
+  }
+}
