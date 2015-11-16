@@ -52,9 +52,11 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = apo.grid.step;
-      this.x -= this.x % gridSize;
-      this.y -= this.y % gridSize;
+      if(apo.grid.active){
+        var gridSize = apo.grid.step;
+        this.x -= this.x % gridSize;
+        this.y -= this.y % gridSize;
+      }
       this.reloadLines();
     }
   }
@@ -67,8 +69,8 @@ DiagramObject.prototype.setPos = function(x, y) {
 
 DiagramObject.prototype.draw = function() {
   var grd=apo.ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height/2);
-  grd.addColorStop(0,"rgb(100,50,100)");
-  grd.addColorStop(1,"rgb(180,150,100)");
+  grd.addColorStop(0,"rgb(255,255,255)");
+  grd.addColorStop(1,"rgb(255,255,255)");
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);

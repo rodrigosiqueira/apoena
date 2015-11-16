@@ -15,7 +15,12 @@
   <a href="#" onclick="parse()">Add parsed element</a>
   <a href="samples/class_data.xml">(HtmlLogger)</a>
 </p>
-
+<div class="navbar">
+  <input type="checkbox" checked onclick="apo.grid.changeState();">View grid</button>
+  <button onclick="zoomIn()">+</button>
+  <button onclick="zoomOut()">-</button>
+  <button onclick="resetZoom()">reset zoom</button>
+</div>
 <canvas id='sample' width='800', height='600'>
   Not supported
 </canvas>

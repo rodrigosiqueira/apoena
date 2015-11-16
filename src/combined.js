@@ -28,6 +28,7 @@ var apo = {
   currentDiagram: "",
   entitylist: [],
   grid: null,
+  currentScale: 1,
   getMousePos: function(event) {
     var rect = apo.canvas.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top }
@@ -40,6 +41,7 @@ var apo = {
     }
     this.grid = new Grid();
     this.ctx = this.canvas.getContext('2d');
+    this.ctx.save();
     this.canvas.addEventListener('click', canvasMouseClickListener);
     this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
     this.canvas.addEventListener('mouseleave', canvasMouseLeaveListener, false);
@@ -47,17 +49,16 @@ var apo = {
     return true;
   },
   draw: function() {
-    if(mouseOverCanvas === true) {
-      apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
-      if(apo.grid.active){
-        apo.grid.draw();
-      }
-      for(var i=0; i < apo.entitylist.length; i++){
-        apo.entitylist[i].draw();
-      }
-
-      window.requestAnimationFrame(apo.draw);
+    apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
+    if(apo.grid.active){
+      console.log("desenhou");
+      apo.grid.draw();
     }
+    for(var i=0; i < apo.entitylist.length; i++){
+      apo.entitylist[i].draw();
+    }
+
+    window.requestAnimationFrame(apo.draw);
   }
 };
 
@@ -65,11 +66,32 @@ function startAnimation() {
   if(mouseOverCanvas) {
     window.requestAnimationFrame(apo.draw);
   }
-}function Point(x, y) {
-        if(typeof x == 'undefined')
-            x = 0;
-        if(typeof y == 'undefined')
-            y = 0;
+}
+
+function zoomIn(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale += 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (1/apo.currentScale);
+  apo.grid.height *= (1/apo.currentScale);
+};
+
+function zoomOut(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale -= 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (1/apo.currentScale);
+  apo.grid.height *= (1/apo.currentScale);
+};
+
+function resetZoom(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale = 1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+};function Point(x=0, y=0) {
 	this.x = x;
 	this.y = y;
 };
@@ -122,10 +144,14 @@ Line.prototype.recalculateLine = function(A, B) {
 
 
 	// Set lines to the boundary of the diagram
-	if(this.points[0].x < this.points[1].x) {
+	if(this.points[1].x > this.A.x + this.A.width) {
 		this.points[0].x += this.A.width/2.0;
-	}else{
+	}else if(this.points[1].x < this.A.x){
 		this.points[0].x -= this.A.width/2.0;
+	}
+	else{
+		this.points[0].y += this.A.height/2.0;
+		this.points[1].y = this.points[0].y;
 	}
 	if(this.points[2].y < this.points[1].y) {
 		this.points[2].y += this.B.height/2.0;
@@ -263,9 +289,11 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = apo.grid.step;
-      this.x -= this.x % gridSize;
-      this.y -= this.y % gridSize;
+      if(apo.grid.active){
+        var gridSize = apo.grid.step;
+        this.x -= this.x % gridSize;
+        this.y -= this.y % gridSize;
+      }
       this.reloadLines();
     }
   }
@@ -278,8 +306,8 @@ DiagramObject.prototype.setPos = function(x, y) {
 
 DiagramObject.prototype.draw = function() {
   var grd=apo.ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height/2);
-  grd.addColorStop(0,"rgb(100,50,100)");
-  grd.addColorStop(1,"rgb(180,150,100)");
+  grd.addColorStop(0,"rgb(255,255,255)");
+  grd.addColorStop(1,"rgb(255,255,255)");
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -527,26 +555,32 @@ Grid.prototype.constructor=Grid;
 
 function Grid() {
   Drawable.call(this);
+  this.width = apo.canvas.width;
+  this.height = apo.canvas.height;
 
   this.active = true;
   this.step = 20;
 
   this.draw = function(){
-  	var width = apo.canvas.width;
-  	var height = apo.canvas.height;
+  	apo.ctx.clearRect(0, 0, this.width, this.height);
   	apo.ctx.lineWidth = 0.5;
   	apo.ctx.strokeStyle = "blue";
-  	for (var i = 0; i < height; i+=this.step) {
+  	for (var i = 0; i < this.height; i+=this.step) {
   		apo.ctx.beginPath();
   		apo.ctx.moveTo(0,i);
-  		apo.ctx.lineTo(width,i);
+  		apo.ctx.lineTo(this.width,i);
   		apo.ctx.stroke();
   	}
-  	for (var i = 0; i < width; i+=this.step) {
+  	for (var i = 0; i < this.width; i+=this.step) {
   		apo.ctx.beginPath();
   		apo.ctx.moveTo(i,0);
-  		apo.ctx.lineTo(i,height);
+  		apo.ctx.lineTo(i,this.height);
   		apo.ctx.stroke();
   	}
+  }
+
+  this.changeState = function(){
+  	this.active = !this.active;
+  	mouseOverCanvas = true;
   }
 }

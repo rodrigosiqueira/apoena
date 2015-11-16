@@ -28,6 +28,7 @@ var apo = {
   currentDiagram: "",
   entitylist: [],
   grid: null,
+  currentScale: 1,
   getMousePos: function(event) {
     var rect = apo.canvas.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top }
@@ -40,6 +41,7 @@ var apo = {
     }
     this.grid = new Grid();
     this.ctx = this.canvas.getContext('2d');
+    this.ctx.save();
     this.canvas.addEventListener('click', canvasMouseClickListener);
     this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
     this.canvas.addEventListener('mouseleave', canvasMouseLeaveListener, false);
@@ -47,17 +49,16 @@ var apo = {
     return true;
   },
   draw: function() {
-    if(mouseOverCanvas === true) {
-      apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
-      if(apo.grid.active){
-        apo.grid.draw();
-      }
-      for(var i=0; i < apo.entitylist.length; i++){
-        apo.entitylist[i].draw();
-      }
-
-      window.requestAnimationFrame(apo.draw);
+    apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
+    if(apo.grid.active){
+      console.log("desenhou");
+      apo.grid.draw();
     }
+    for(var i=0; i < apo.entitylist.length; i++){
+      apo.entitylist[i].draw();
+    }
+
+    window.requestAnimationFrame(apo.draw);
   }
 };
 
@@ -66,3 +67,28 @@ function startAnimation() {
     window.requestAnimationFrame(apo.draw);
   }
 }
+
+function zoomIn(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale += 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (1/apo.currentScale);
+  apo.grid.height *= (1/apo.currentScale);
+};
+
+function zoomOut(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale -= 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (1/apo.currentScale);
+  apo.grid.height *= (1/apo.currentScale);
+};
+
+function resetZoom(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale = 1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+};
