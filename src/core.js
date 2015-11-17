@@ -73,8 +73,8 @@ function zoomIn(){
   apo.ctx.save();
   apo.currentScale += 0.1;
   apo.ctx.scale(apo.currentScale, apo.currentScale);
-  apo.grid.width *= (1/apo.currentScale);
-  apo.grid.height *= (1/apo.currentScale);
+  apo.grid.width *= (apo.currentScale);
+  apo.grid.height *= (apo.currentScale);
 };
 
 function zoomOut(){
