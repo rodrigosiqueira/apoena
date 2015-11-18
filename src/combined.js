@@ -65,7 +65,11 @@ function startAnimation() {
   if(mouseOverCanvas) {
     window.requestAnimationFrame(apo.draw);
   }
-}function Point(x=0, y=0) {
+}function Point(x, y) {
+        if(typeof x == 'undefined')
+            x = 0;
+        if(typeof y == 'undefined')
+            y = 0;
 	this.x = x;
 	this.y = y;
 };
