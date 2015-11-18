@@ -1,4 +1,8 @@
-function Property(name="Property", type=null) {
+function Property(name, type) {
+  if(typeof name == "undefined")
+    name = "Property";
+  if(typeof type == "undefined")
+    type = null;
   this.name = name;
   this.visibility = visibility.public;
   this.type = type;

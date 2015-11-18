@@ -335,7 +335,11 @@ var visibility = {
   public: 0,
   private: 1,
   protected: 2
-};function Property(name="Property", type=null) {
+};function Property(name, type) {
+  if(typeof name == "undefined")
+    name = "Property";
+  if(typeof type == "undefined")
+    type = null;
   this.name = name;
   this.visibility = visibility.public;
   this.type = type;
@@ -357,7 +361,8 @@ Property.prototype.draw = function(x, y) {
       apo.ctx.fillText("#", x, y);
       break;
   }
-};Variable.prototype = new Property();
+};
+Variable.prototype = new Property();
 Variable.prototype.constructor=Variable;
 
 function Variable(name, type) {
