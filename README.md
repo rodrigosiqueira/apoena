@@ -7,4 +7,4 @@ apoena: aquele que enxerga longe
 
 The samples can be viewed using rawgit using the following links.
 
-* [apoena.html](https://rawgit.com/rodrigosiqueira/apoena/master/samples/apoena.html)
+* [apoena.html](https://rawgit.com/kuniri/apoena/master/apoena.html)
