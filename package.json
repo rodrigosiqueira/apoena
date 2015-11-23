@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "./node_modules/node-qunit-phantomjs/bin/node-qunit-phantomjs test/qunit.html",
-    "start": "./node_modules/supervisor/lib/cli-wrapper.js $EXTRA_ARGS -e 'node,js,coffee' server.js",
-    "debug": "./node_modules/supervisor/lib/cli-wrapper.js $EXTRA_ARGS -V -e 'node,js,coffee' server.js"
+    "start": "./node_modules/supervisor/lib/cli-wrapper.js $EXTRA_ARGS  -i 'node_modules,test' -e 'node,html,js,coffee' server.js",
+    "debug": "./node_modules/supervisor/lib/cli-wrapper.js $EXTRA_ARGS -V -i 'node_modules,test' -e 'node,html,js,coffee' server.js"
   },
   "repository": {
     "type": "git",
