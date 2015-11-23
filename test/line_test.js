@@ -36,10 +36,10 @@ QUnit.test("Line calculation", function(assert) {
 
   assert.deepEqual(381, line.points[0].x, "We expect value of x in point 1");
   assert.deepEqual(53, line.points[0].y, "We expect value of y in point 1");
-  assert.deepEqual(15, line.points[1].x, "We expect value of x in point 2");
+  assert.deepEqual(30, line.points[1].x, "We expect value of x in point 2");
   assert.deepEqual(53, line.points[1].y, "We expect value of y in point 2");
-  assert.deepEqual(15, line.points[2].x, "We expect value of x in point 3");
-  assert.deepEqual(50, line.points[2].y, "We expect value of y in point 3");
+  assert.deepEqual(30, line.points[2].x, "We expect value of x in point 3");
+  assert.deepEqual(53, line.points[2].y, "We expect value of y in point 3");
 
   assert.deepEqual(line, d1.lines[0], "We expect value of lines to contain line");
   assert.deepEqual(line, d2.lines[0], "We expect value of lines to contain line");
@@ -57,10 +57,10 @@ QUnit.test("Line recalculation", function(assert) {
 
   assert.deepEqual(381, line.points[0].x, "We expect value of x in point 1");
   assert.deepEqual(53, line.points[0].y, "We expect value of y in point 1");
-  assert.deepEqual(15, line.points[1].x, "We expect value of x in point 2");
+  assert.deepEqual(30, line.points[1].x, "We expect value of x in point 2");
   assert.deepEqual(53, line.points[1].y, "We expect value of y in point 2");
-  assert.deepEqual(15, line.points[2].x, "We expect value of x in point 3");
-  assert.deepEqual(50, line.points[2].y, "We expect value of y in point 3");
+  assert.deepEqual(30, line.points[2].x, "We expect value of x in point 3");
+  assert.deepEqual(53, line.points[2].y, "We expect value of y in point 3");
 });
 
 QUnit.test("Drawable constructor", function(assert) {
