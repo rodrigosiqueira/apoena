@@ -55,7 +55,9 @@ var apo = {
       apo.grid.draw();
     }
     for(var i=0; i < apo.entitylist.length; i++){
-      apo.entitylist[i].draw();
+      if(apo.entitylist[i].visible){
+        apo.entitylist[i].draw();
+      }
     }
 
     window.requestAnimationFrame(apo.draw);
@@ -91,4 +93,8 @@ function resetZoom(){
   apo.ctx.save();
   apo.currentScale = 1;
   apo.ctx.scale(apo.currentScale, apo.currentScale);
+};
+
+function saveImage(){
+  window.open().location = apo.canvas.toDataURL("image/png");
 };

@@ -30,14 +30,16 @@ function DiagramObject(name) {
 DiagramObject.prototype.mousemove = function(event) {
   if(this.drag) {
     var rect = apo.canvas.getBoundingClientRect();
-    this.x = event.clientX - rect.left - this.offset.x;
-    this.y = event.clientY - rect.top - this.offset.y;
+    this.x = event.clientX/apo.currentScale - (rect.left/apo.currentScale) - (this.offset.x*apo.currentScale);
+    this.y = event.clientY/apo.currentScale - (rect.top/apo.currentScale) - (this.offset.y*apo.currentScale);
     this.reloadLines();
   }
 };
 
 DiagramObject.prototype.mouseclick = function(event) {
   var mouse = apo.getMousePos(event);
+  mouse.x /= apo.currentScale;
+  mouse.y /= apo.currentScale;
   if(apo.currentDiagram != "" && apo.currentDiagram != this.name)
     return;
   if( mouse.x > this.x &&

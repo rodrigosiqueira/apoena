@@ -5,6 +5,7 @@ function Point(x=0, y=0) {
 
 function Drawable() {
 	this.name = 'draw';
+	this.visible = true;
 };
 
 Drawable.prototype.draw = function() {
@@ -38,6 +39,13 @@ Line.prototype.recalculateLine = function(A, B) {
 	}
 	if(typeof B == 'object'){
 		this.B = B;
+	}
+
+	if (this.colliding(this.A,this.B)) {
+		this.visible = false;
+	}
+	else{
+		this.visible = true;
 	}
 
 	var cax = this.A.x+this.A.width/2.0;
@@ -115,7 +123,7 @@ Line.prototype.draw = function() {
 		}
 		var dy = 0;
 		if(this.points[2].y > this.points[0].y){
-			dy = apo.ctx.measureText(this.textA).height+10;
+			//dy = apo.ctx.measureText(this.textA).height+10;
 		}
 		apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12+dy);
 	}
@@ -127,4 +135,13 @@ Line.prototype.draw = function() {
 		var lastI = this.points.length-1;
 		apo.ctx.fillText(this.textB, this.points[lastI].x+5, dy+this.points[lastI].y-12);
 	}
+};
+
+Line.prototype.colliding = function(A,B) {
+	if((A.x + A.width) >= B.x && A.x <= (B.x + B.width)) {
+		if((A.y + A.height) >= B.y && A.y <= (B.y + B.height)) {
+			return true;
+		}
+	}
+	return false;
 };
