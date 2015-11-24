@@ -1,5 +1,5 @@
 QUnit.test("DiagramObject constructor without name", function(assert) {
-  assert.expect(12);
+  assert.expect(10);
 
   apo.reloadCanvas('sample');
   var diagramObject = new DiagramObject();
@@ -13,13 +13,11 @@ QUnit.test("DiagramObject constructor without name", function(assert) {
   assert.deepEqual(false, diagramObject.drag,            "We expect value of drag to be false");
   assert.deepEqual(0, diagramObject.offset.x,            "We expect value of offset.x to be zero");
   assert.deepEqual(0, diagramObject.offset.y,            "We expect value of offset.y to be zero");
-  assert.deepEqual(apo.ctx.measureText("DiagramObject").width+10, diagramObject.width,            "We expect value of width to be apo.ctx.measureText(this.name).width+10");
-  assert.deepEqual("20px Times New Roman", apo.ctx.font, "We expect value of context font to be 20px Times New Roman");
   assert.deepEqual(diagramObject, apo.entitylist[apo.entitylist.length - 1],     "We expect value of entity list to be contain the diagram object");
 });
 
 QUnit.test("DiagramObject constructor with name", function(assert) {
-  assert.expect(12);
+  assert.expect(10);
 
   var name = "DOname";
   apo.reloadCanvas('sample');
@@ -34,8 +32,6 @@ QUnit.test("DiagramObject constructor with name", function(assert) {
   assert.deepEqual(false, diagramObject.drag,            "We expect value of drag to be false");
   assert.deepEqual(0, diagramObject.offset.x,            "We expect value of offset.x to be zero");
   assert.deepEqual(0, diagramObject.offset.y,            "We expect value of offset.y to be zero");
-  assert.deepEqual(apo.ctx.measureText(name).width+10, diagramObject.width,            "We expect value of width to be apo.ctx.measureText(this.name).width+10");
-  assert.deepEqual("20px Times New Roman", apo.ctx.font, "We expect value of context font to be 20px Times New Roman");
   assert.deepEqual(diagramObject, apo.entitylist[apo.entitylist.length - 1],     "We expect value of entity list to be contain the diagram object");
 });
 
