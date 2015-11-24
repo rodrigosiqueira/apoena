@@ -15,8 +15,14 @@
   <a href="#" onclick="parse()">Add parsed element</a>
   <a href="samples/class_data.xml">(HtmlLogger)</a>
 </p>
-
-<canvas id='sample' width='800', height='600'>
+<div class="navbar">
+  <input type="checkbox" checked onclick="apo.grid.changeState();">View grid</button>
+  <button onclick="zoomIn()">+</button>
+  <button onclick="zoomOut()">-</button>
+  <button onclick="resetZoom()">reset zoom</button>
+  <button onclick="saveImage()">Export Image</button>
+</div>
+<canvas id='sample' width='1000', height='600'>
   Not supported
 </canvas>
 <div class="todo">
@@ -32,12 +38,12 @@
     </ul>
     <li><s>Make requestAnimationFrame stop when mouse outside (performance)</s></li>
     <li><s>Make requestAnimationFrame start when mouse over canvas if not started (performance)</s></li>
-    <li>Smart lines, now it always go right-down from A to B</li>
+    <li><s>Smart lines, now it always go right-down from A to B</s></li>
     <li>Separate variables and methods of DiagramObj</li>
   </ul>
   <ul>
     Diagram
-    <li>Zooming</li>
+    <li><s>Zooming</s></li>
     <li><s>Click single element</s></li>
     <li>Arrangement</li>
     <li>Colors</li>
@@ -46,7 +52,7 @@
   </ul>
   <ul>
     Line
-    <li>Calculation</li>
+    <li><s>Calculation</s></li>
     <li>Kinds</li>
   </ul>
   <ul>

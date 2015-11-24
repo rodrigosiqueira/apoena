@@ -30,14 +30,16 @@ function DiagramObject(name) {
 DiagramObject.prototype.mousemove = function(event) {
   if(this.drag) {
     var rect = apo.canvas.getBoundingClientRect();
-    this.x = event.clientX - rect.left - this.offset.x;
-    this.y = event.clientY - rect.top - this.offset.y;
+    this.x = event.clientX/apo.currentScale - (rect.left/apo.currentScale) - (this.offset.x*apo.currentScale);
+    this.y = event.clientY/apo.currentScale - (rect.top/apo.currentScale) - (this.offset.y*apo.currentScale);
     this.reloadLines();
   }
 };
 
 DiagramObject.prototype.mouseclick = function(event) {
   var mouse = apo.getMousePos(event);
+  mouse.x /= apo.currentScale;
+  mouse.y /= apo.currentScale;
   if(apo.currentDiagram != "" && apo.currentDiagram != this.name)
     return;
   if( mouse.x > this.x &&
@@ -52,9 +54,11 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = apo.grid.step;
-      this.x -= this.x % gridSize;
-      this.y -= this.y % gridSize;
+      if(apo.grid.active){
+        var gridSize = apo.grid.step;
+        this.x -= this.x % gridSize;
+        this.y -= this.y % gridSize;
+      }
       this.reloadLines();
     }
   }
@@ -67,8 +71,8 @@ DiagramObject.prototype.setPos = function(x, y) {
 
 DiagramObject.prototype.draw = function() {
   var grd=apo.ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height/2);
-  grd.addColorStop(0,"rgb(100,50,100)");
-  grd.addColorStop(1,"rgb(180,150,100)");
+  grd.addColorStop(0,"rgb(255,255,255)");
+  grd.addColorStop(1,"rgb(255,255,255)");
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);

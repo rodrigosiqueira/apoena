@@ -9,6 +9,7 @@ function Point(x, y) {
 
 function Drawable() {
 	this.name = 'draw';
+	this.visible = true;
 };
 
 Drawable.prototype.draw = function() {
@@ -44,6 +45,13 @@ Line.prototype.recalculateLine = function(A, B) {
 		this.B = B;
 	}
 
+	if (this.colliding(this.A,this.B)) {
+		this.visible = false;
+	}
+	else{
+		this.visible = true;
+	}
+
 	var cax = this.A.x+this.A.width/2.0;
 	var cay = this.A.y+this.A.height/2.0;
 	var cbx = this.B.x+this.B.width/2.0;
@@ -53,17 +61,41 @@ Line.prototype.recalculateLine = function(A, B) {
 	this.points[1].x = cbx; this.points[1].y = cay;
 	this.points[2].x = cbx; this.points[2].y = cby;
 
-
+	var yoffset = 8;
 	// Set lines to the boundary of the diagram
-	if(this.points[0].x < this.points[1].x) {
+	if(this.points[1].x > this.A.x + this.A.width) {
 		this.points[0].x += this.A.width/2.0;
-	}else{
+	}else if(this.points[1].x < this.A.x){
 		this.points[0].x -= this.A.width/2.0;
 	}
-	if(this.points[2].y < this.points[1].y) {
-		this.points[2].y += this.B.height/2.0;
-	}else{
+	else{
+		if(cay > cby){
+			this.points[0].y -= this.A.height/2.0;
+			this.points[1].y = this.points[0].y + 1; //inheritance to right side
+		}
+		else{
+			this.points[0].y += this.A.height/2.0;
+			this.points[1].y = this.points[0].y;
+
+		}
+		this.points[0].x = this.points[1].x;
+	}
+	if(this.points[2].y > this.A.y + this.A.height + yoffset) {
 		this.points[2].y -= this.B.height/2.0;
+	}else if(this.points[2].y < this.A.y - yoffset){
+		this.points[2].y += this.B.height/2.0;
+	}
+	else{
+		if(cax > cbx){
+			this.points[2].x += this.B.width/2.0;
+
+		}
+		else{
+			this.points[2].x -= this.B.width/2.0;
+		}
+		this.points[2].y = this.points[0].y;
+		this.points[1].x = this.points[2].x;
+		this.points[1].y = this.points[2].y;
 	}
 };
 
@@ -93,7 +125,11 @@ Line.prototype.draw = function() {
 		if(this.points[0].x > this.points[1].x){
 			dx = apo.ctx.measureText(this.textA).width+10;
 		}
-		apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12);
+		var dy = 0;
+		if(this.points[2].y > this.points[0].y){
+			//dy = apo.ctx.measureText(this.textA).height+10;
+		}
+		apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12+dy);
 	}
 	if(this.textB) {
 		var dy = 0;
@@ -103,4 +139,13 @@ Line.prototype.draw = function() {
 		var lastI = this.points.length-1;
 		apo.ctx.fillText(this.textB, this.points[lastI].x+5, dy+this.points[lastI].y-12);
 	}
+};
+
+Line.prototype.colliding = function(A,B) {
+	if((A.x + A.width) >= B.x && A.x <= (B.x + B.width)) {
+		if((A.y + A.height) >= B.y && A.y <= (B.y + B.height)) {
+			return true;
+		}
+	}
+	return false;
 };

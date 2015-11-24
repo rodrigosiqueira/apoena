@@ -28,6 +28,7 @@ var apo = {
   currentDiagram: "",
   entitylist: [],
   grid: null,
+  currentScale: 1,
   getMousePos: function(event) {
     var rect = apo.canvas.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top }
@@ -40,6 +41,7 @@ var apo = {
     }
     this.grid = new Grid();
     this.ctx = this.canvas.getContext('2d');
+    this.ctx.save();
     this.canvas.addEventListener('click', canvasMouseClickListener);
     this.canvas.addEventListener('mousemove', canvasMouseMoveListener);
     this.canvas.addEventListener('mouseleave', canvasMouseLeaveListener, false);
@@ -47,17 +49,18 @@ var apo = {
     return true;
   },
   draw: function() {
-    if(mouseOverCanvas === true) {
-      apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
-      if(apo.grid.active){
-        apo.grid.draw();
-      }
-      for(var i=0; i < apo.entitylist.length; i++){
+    apo.ctx.clearRect(0, 0, apo.canvas.width, apo.canvas.height);
+    if(apo.grid.active){
+      console.log("desenhou");
+      apo.grid.draw();
+    }
+    for(var i=0; i < apo.entitylist.length; i++){
+      if(apo.entitylist[i].visible){
         apo.entitylist[i].draw();
       }
-
-      window.requestAnimationFrame(apo.draw);
     }
+
+    window.requestAnimationFrame(apo.draw);
   }
 };
 
@@ -65,7 +68,36 @@ function startAnimation() {
   if(mouseOverCanvas) {
     window.requestAnimationFrame(apo.draw);
   }
-}function Point(x, y) {
+}
+
+function zoomIn(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale += 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (apo.currentScale);
+  apo.grid.height *= (apo.currentScale);
+};
+
+function zoomOut(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale -= 0.1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+  apo.grid.width *= (1/apo.currentScale);
+  apo.grid.height *= (1/apo.currentScale);
+};
+
+function resetZoom(){
+  apo.ctx.restore();
+  apo.ctx.save();
+  apo.currentScale = 1;
+  apo.ctx.scale(apo.currentScale, apo.currentScale);
+};
+
+function saveImage(){
+  window.open().location = apo.canvas.toDataURL("image/png");
+};function Point(x, y) {
         if(typeof x == 'undefined')
             x = 0;
         if(typeof y == 'undefined')
@@ -76,6 +108,7 @@ function startAnimation() {
 
 function Drawable() {
 	this.name = 'draw';
+	this.visible = true;
 };
 
 Drawable.prototype.draw = function() {
@@ -111,6 +144,13 @@ Line.prototype.recalculateLine = function(A, B) {
 		this.B = B;
 	}
 
+	if (this.colliding(this.A,this.B)) {
+		this.visible = false;
+	}
+	else{
+		this.visible = true;
+	}
+
 	var cax = this.A.x+this.A.width/2.0;
 	var cay = this.A.y+this.A.height/2.0;
 	var cbx = this.B.x+this.B.width/2.0;
@@ -120,17 +160,41 @@ Line.prototype.recalculateLine = function(A, B) {
 	this.points[1].x = cbx; this.points[1].y = cay;
 	this.points[2].x = cbx; this.points[2].y = cby;
 
-
+	var yoffset = 8;
 	// Set lines to the boundary of the diagram
-	if(this.points[0].x < this.points[1].x) {
+	if(this.points[1].x > this.A.x + this.A.width) {
 		this.points[0].x += this.A.width/2.0;
-	}else{
+	}else if(this.points[1].x < this.A.x){
 		this.points[0].x -= this.A.width/2.0;
 	}
-	if(this.points[2].y < this.points[1].y) {
-		this.points[2].y += this.B.height/2.0;
-	}else{
+	else{
+		if(cay > cby){
+			this.points[0].y -= this.A.height/2.0;
+			this.points[1].y = this.points[0].y + 1; //inheritance to right side
+		}
+		else{
+			this.points[0].y += this.A.height/2.0;
+			this.points[1].y = this.points[0].y;
+
+		}
+		this.points[0].x = this.points[1].x;
+	}
+	if(this.points[2].y > this.A.y + this.A.height + yoffset) {
 		this.points[2].y -= this.B.height/2.0;
+	}else if(this.points[2].y < this.A.y - yoffset){
+		this.points[2].y += this.B.height/2.0;
+	}
+	else{
+		if(cax > cbx){
+			this.points[2].x += this.B.width/2.0;
+
+		}
+		else{
+			this.points[2].x -= this.B.width/2.0;
+		}
+		this.points[2].y = this.points[0].y;
+		this.points[1].x = this.points[2].x;
+		this.points[1].y = this.points[2].y;
 	}
 };
 
@@ -160,7 +224,11 @@ Line.prototype.draw = function() {
 		if(this.points[0].x > this.points[1].x){
 			dx = apo.ctx.measureText(this.textA).width+10;
 		}
-		apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12);
+		var dy = 0;
+		if(this.points[2].y > this.points[0].y){
+			//dy = apo.ctx.measureText(this.textA).height+10;
+		}
+		apo.ctx.fillText(this.textA, this.points[0].x+5-dx, this.points[0].y-12+dy);
 	}
 	if(this.textB) {
 		var dy = 0;
@@ -170,6 +238,15 @@ Line.prototype.draw = function() {
 		var lastI = this.points.length-1;
 		apo.ctx.fillText(this.textB, this.points[lastI].x+5, dy+this.points[lastI].y-12);
 	}
+};
+
+Line.prototype.colliding = function(A,B) {
+	if((A.x + A.width) >= B.x && A.x <= (B.x + B.width)) {
+		if((A.y + A.height) >= B.y && A.y <= (B.y + B.height)) {
+			return true;
+		}
+	}
+	return false;
 };
 
 InheritanceLine.prototype = new Line();
@@ -241,14 +318,16 @@ function DiagramObject(name) {
 DiagramObject.prototype.mousemove = function(event) {
   if(this.drag) {
     var rect = apo.canvas.getBoundingClientRect();
-    this.x = event.clientX - rect.left - this.offset.x;
-    this.y = event.clientY - rect.top - this.offset.y;
+    this.x = event.clientX/apo.currentScale - (rect.left/apo.currentScale) - (this.offset.x*apo.currentScale);
+    this.y = event.clientY/apo.currentScale - (rect.top/apo.currentScale) - (this.offset.y*apo.currentScale);
     this.reloadLines();
   }
 };
 
 DiagramObject.prototype.mouseclick = function(event) {
   var mouse = apo.getMousePos(event);
+  mouse.x /= apo.currentScale;
+  mouse.y /= apo.currentScale;
   if(apo.currentDiagram != "" && apo.currentDiagram != this.name)
     return;
   if( mouse.x > this.x &&
@@ -263,9 +342,11 @@ DiagramObject.prototype.mouseclick = function(event) {
     }
     else {
       apo.currentDiagram = "";
-      var gridSize = apo.grid.step;
-      this.x -= this.x % gridSize;
-      this.y -= this.y % gridSize;
+      if(apo.grid.active){
+        var gridSize = apo.grid.step;
+        this.x -= this.x % gridSize;
+        this.y -= this.y % gridSize;
+      }
       this.reloadLines();
     }
   }
@@ -278,8 +359,8 @@ DiagramObject.prototype.setPos = function(x, y) {
 
 DiagramObject.prototype.draw = function() {
   var grd=apo.ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height/2);
-  grd.addColorStop(0,"rgb(100,50,100)");
-  grd.addColorStop(1,"rgb(180,150,100)");
+  grd.addColorStop(0,"rgb(255,255,255)");
+  grd.addColorStop(1,"rgb(255,255,255)");
 
   apo.ctx.fillStyle = grd;
   apo.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -527,26 +608,32 @@ Grid.prototype.constructor=Grid;
 
 function Grid() {
   Drawable.call(this);
+  this.width = apo.canvas.width;
+  this.height = apo.canvas.height;
 
   this.active = true;
   this.step = 20;
 
   this.draw = function(){
-  	var width = apo.canvas.width;
-  	var height = apo.canvas.height;
+  	apo.ctx.clearRect(0, 0, this.width, this.height);
   	apo.ctx.lineWidth = 0.5;
   	apo.ctx.strokeStyle = "blue";
-  	for (var i = 0; i < height; i+=this.step) {
+  	for (var i = 0; i < this.height; i+=this.step) {
   		apo.ctx.beginPath();
   		apo.ctx.moveTo(0,i);
-  		apo.ctx.lineTo(width,i);
+  		apo.ctx.lineTo(this.width,i);
   		apo.ctx.stroke();
   	}
-  	for (var i = 0; i < width; i+=this.step) {
+  	for (var i = 0; i < this.width; i+=this.step) {
   		apo.ctx.beginPath();
   		apo.ctx.moveTo(i,0);
-  		apo.ctx.lineTo(i,height);
+  		apo.ctx.lineTo(i,this.height);
   		apo.ctx.stroke();
   	}
+  }
+
+  this.changeState = function(){
+  	this.active = !this.active;
+  	mouseOverCanvas = true;
   }
 }
